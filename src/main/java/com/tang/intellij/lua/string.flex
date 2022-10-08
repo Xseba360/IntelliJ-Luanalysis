@@ -34,12 +34,14 @@ import static com.tang.intellij.lua.psi.LuaTypes.*;
 
 %state STRING_CONTENT
 %state BLOCK_STRING_CONTENT
+%state HASH_LITERAL_CONTENT
 
 %%
 
 <YYINITIAL> {
     "\""    { yybegin(STRING_CONTENT); return STRING; }
     "'"     { yybegin(STRING_CONTENT); return STRING; }
+    "`"     { yybegin(HASH_LITERAL_CONTENT); return NUMBER; }
     \[=*\[  { yybegin(BLOCK_STRING_CONTENT); return STRING; }
     [^]     { return STRING; }
 }
@@ -51,6 +53,10 @@ import static com.tang.intellij.lua.psi.LuaTypes.*;
     \\\d+       { return VALID_STRING_ESCAPE_TOKEN; }
     \\\S        { return VALID_STRING_ESCAPE_TOKEN; }
     [^]         { return STRING; }
+}
+
+<HASH_LITERAL_CONTENT> {
+    [^]         { return NUMBER; }
 }
 
 <BLOCK_STRING_CONTENT> {

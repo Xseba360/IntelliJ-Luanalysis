@@ -91,6 +91,8 @@ JIT_EXT_NUMBER=(0[xX]{h}|{n})U?LL
 HEX_NUMBER=0[xX]({h}|{h}[.]{h})({exp}|{ppp})?
 NUMBER={JIT_EXT_NUMBER}|{HEX_NUMBER}|({n}|{n}[.]{n}){exp}?|[.]{n}|{n}[.]
 
+FIVEM_HASH_LITERAL=`([^\\\`]|\\\S|\\[\r\n])*`?    //'([^\\'\r\n]|\\[^\r\n])*'?
+
 //Comments
 REGION_START =--(region|\{\{\{)([^\r\n]*)*
 REGION_END =--(endregion|\}\}\})([^\r\n]*)*
@@ -108,6 +110,7 @@ LONG_STRING=\[=*\[[\s\S]*\]=*\]
 %state xSHEBANG
 %state xDOUBLE_QUOTED_STRING
 %state xSINGLE_QUOTED_STRING
+%state xFIVEM_HASH_LITERAL
 %state xBLOCK_STRING
 %state xCOMMENT
 %state xBLOCK_COMMENT
@@ -196,6 +199,7 @@ LONG_STRING=\[=*\[[\s\S]*\]=*\]
 
   "\""                        { yybegin(xDOUBLE_QUOTED_STRING); yypushback(yylength()); }
   "'"                         { yybegin(xSINGLE_QUOTED_STRING); yypushback(yylength()); }
+  "`"                         { yybegin(xFIVEM_HASH_LITERAL);   yypushback(yylength()); }
 
   {ID}                        { return ID; }
   {NUMBER}                    { return NUMBER; }
@@ -218,4 +222,7 @@ LONG_STRING=\[=*\[[\s\S]*\]=*\]
 
 <xSINGLE_QUOTED_STRING> {
     {SINGLE_QUOTED_STRING}    { yybegin(YYINITIAL); return STRING; }
+}
+<xFIVEM_HASH_LITERAL> {
+    {FIVEM_HASH_LITERAL}      { yybegin(YYINITIAL); return NUMBER; }
 }

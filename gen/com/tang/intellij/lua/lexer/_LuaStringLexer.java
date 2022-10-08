@@ -26,6 +26,7 @@ public class _LuaStringLexer implements FlexLexer {
   public static final int YYINITIAL = 0;
   public static final int STRING_CONTENT = 2;
   public static final int BLOCK_STRING_CONTENT = 4;
+  public static final int HASH_LITERAL_CONTENT = 6;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -33,14 +34,14 @@ public class _LuaStringLexer implements FlexLexer {
    *                  at the beginning of a line
    * l is of the form l = 2*k, k a non negative integer
    */
-  private static final int[] ZZ_LEXSTATE = {
-     0,  0,  1,  1,  2, 2
+  private static final int ZZ_LEXSTATE[] = { 
+     0,  0,  1,  1,  2,  2,  3, 3
   };
 
   /** 
    * Translates characters to character classes
    * Chosen bits are [10, 6, 5]
-   * Total runtime size is 4160 bytes
+   * Total runtime size is 4224 bytes
    */
   public static int ZZ_CMAP(int ch) {
     return ZZ_CMAP_A[(ZZ_CMAP_Y[(ZZ_CMAP_Z[ch>>11]<<6)|((ch>>5)&0x3f)]<<5)|(ch&0x1f)];
@@ -53,19 +54,21 @@ public class _LuaStringLexer implements FlexLexer {
 
   /* The ZZ_CMAP_Y table has 1024 entries */
   static final char ZZ_CMAP_Y[] = zzUnpackCMap(
-    "\1\0\1\1\1\2\1\3\1\4\1\5\55\3\1\6\3\3\1\7\6\3\1\6\14\3\1\10\3\3\1\10\3\3\1"+
-    "\10\3\3\1\10\3\3\1\10\3\3\1\10\3\3\1\10\3\3\1\10\3\3\1\10\3\3\1\10\2\3\1\7"+
-    "\3\3\1\7\2\3\1\6\10\3\1\6\1\3\1\7\57\3\1\5\12\3\1\6\1\7\11\3\1\10\3\3\1\7"+
-    "\5\3\1\11\5\3\1\7\2\3\1\7\4\3\1\11\35\3\1\12\1\13\1\14\175\3\1\5\160\3\1\6"+
-    "\24\3\1\7\1\3\1\6\5\3\2\7\2\3\1\7\14\3\1\7\130\3\1\7\54\3\1\6\35\3\1\10\3"+
-    "\3\1\7\1\3\1\15\4\3\1\7\10\3\1\7\12\3\1\7\3\3\1\7\13\3\1\7\3\3\1\6\2\3\1\7"+
-    "\15\3\1\6\32\3\1\7\60\3\1\6\6\3\1\7\143\3\1\16\1\17\12\3\1\7\65\3");
+    "\1\0\1\1\1\2\1\3\1\4\1\5\55\6\1\7\3\6\1\10\6\6\1\7\14\6\1\11\3\6\1\11\3\6"+
+    "\1\11\3\6\1\11\3\6\1\11\3\6\1\11\3\6\1\11\3\6\1\11\3\6\1\11\3\6\1\11\2\6\1"+
+    "\10\3\6\1\10\2\6\1\7\10\6\1\7\1\6\1\10\57\6\1\5\12\6\1\7\1\10\11\6\1\11\3"+
+    "\6\1\10\5\6\1\12\5\6\1\10\2\6\1\10\4\6\1\12\35\6\1\13\1\14\1\15\175\6\1\5"+
+    "\160\6\1\7\24\6\1\10\1\6\1\7\5\6\2\10\2\6\1\10\14\6\1\10\130\6\1\10\54\6\1"+
+    "\7\35\6\1\11\3\6\1\10\1\6\1\16\4\6\1\10\10\6\1\10\12\6\1\10\3\6\1\10\13\6"+
+    "\1\10\3\6\1\7\2\6\1\10\15\6\1\7\32\6\1\10\60\6\1\7\6\6\1\10\143\6\1\17\1\20"+
+    "\12\6\1\10\65\6");
 
-  /* The ZZ_CMAP_A table has 512 entries */
+  /* The ZZ_CMAP_A table has 544 entries */
   static final char ZZ_CMAP_A[] = zzUnpackCMap(
-    "\11\7\1\0\1\4\3\0\22\7\1\0\1\7\1\1\4\7\1\1\10\7\12\6\3\7\1\3\35\7\1\2\1\5"+
-    "\50\7\1\0\32\7\1\0\37\7\12\6\46\7\12\6\14\7\12\6\20\7\12\6\6\7\12\6\6\7\13"+
-    "\0\35\7\2\0\5\7\1\0\57\7\1\0\26\7\12\6\16\7\62\6");
+    "\11\10\1\0\1\5\3\0\22\10\1\0\1\10\1\1\4\10\1\1\10\10\12\7\3\10\1\4\35\10\1"+
+    "\3\1\6\3\10\1\2\44\10\1\0\32\10\1\0\77\10\12\7\46\10\12\7\14\10\12\7\20\10"+
+    "\12\7\6\10\12\7\6\10\13\0\35\10\2\0\5\10\1\0\57\10\1\0\26\10\12\7\16\10\62"+
+    "\7");
 
   /** 
    * Translates DFA states to action switch labels.
@@ -73,11 +76,11 @@ public class _LuaStringLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\3\0\1\1\1\2\2\1\1\3\1\1\1\4\1\0"+
-    "\1\5\1\6\1\5";
+    "\4\0\1\1\1\2\1\3\2\1\1\4\1\1\1\5"+
+    "\1\6\1\0\1\7\1\10\1\7";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[14];
+    int [] result = new int[17];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -102,11 +105,12 @@ public class _LuaStringLexer implements FlexLexer {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\10\0\20\0\30\0\30\0\40\0\50\0\30"+
-    "\0\60\0\30\0\40\0\30\0\30\0\70";
+    "\0\0\0\11\0\22\0\33\0\44\0\44\0\44\0\55"+
+    "\0\66\0\44\0\77\0\44\0\44\0\55\0\44\0\44"+
+    "\0\110";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[14];
+    int [] result = new int[17];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -129,13 +133,13 @@ public class _LuaStringLexer implements FlexLexer {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\4\1\5\1\6\5\4\4\7\1\10\1\11\2\7"+
-    "\10\4\12\0\1\12\1\13\4\0\4\7\2\0\2\7"+
-    "\1\0\3\14\1\15\1\14\1\16\1\14\6\0\1\16"+
-    "\1\0";
+    "\1\5\1\6\1\7\1\10\5\5\5\11\1\12\1\13"+
+    "\2\11\11\5\11\14\14\0\1\15\1\16\4\0\5\11"+
+    "\2\0\2\11\1\0\4\17\1\20\1\17\1\21\1\17"+
+    "\7\0\1\21\1\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[64];
+    int [] result = new int[81];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -173,11 +177,11 @@ public class _LuaStringLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\3\0\2\11\2\1\1\11\1\1\1\11\1\0\2\11"+
+    "\4\0\3\11\2\1\1\11\1\1\2\11\1\0\2\11"+
     "\1\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[14];
+    int [] result = new int[17];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -196,7 +200,7 @@ public class _LuaStringLexer implements FlexLexer {
   }
 
   /** the input device */
-  private final java.io.Reader zzReader;
+  private java.io.Reader zzReader;
 
   /** the current state of the DFA */
   private int zzState;
@@ -291,7 +295,7 @@ public class _LuaStringLexer implements FlexLexer {
   /**
    * Refills the input buffer.
    *
-   * @return      <code>false</code>, iff there was new input.
+   * @return      {@code false}, iff there was new input.
    *
    * @exception   java.io.IOException  if any I/O-Error occurs
    */
@@ -327,7 +331,7 @@ public class _LuaStringLexer implements FlexLexer {
 
 
   /**
-   * Returns the character at position <tt>pos</tt> from the
+   * Returns the character at position {@code pos} from the
    * matched text.
    *
    * It is equivalent to yytext().charAt(pos), but faster
@@ -500,32 +504,42 @@ public class _LuaStringLexer implements FlexLexer {
             { return STRING;
             } 
             // fall through
-          case 7: break;
+          case 9: break;
           case 2: 
             { yybegin(STRING_CONTENT); return STRING;
             } 
             // fall through
-          case 8: break;
-          case 3: 
-            { return INVALID_NEXT_LINE;
-            } 
-            // fall through
-          case 9: break;
-          case 4: 
-            { yybegin(BLOCK_STRING_CONTENT); return STRING;
-            } 
-            // fall through
           case 10: break;
-          case 5: 
-            { return VALID_STRING_ESCAPE_TOKEN;
+          case 3: 
+            { yybegin(HASH_LITERAL_CONTENT); return NUMBER;
             } 
             // fall through
           case 11: break;
-          case 6: 
-            { return NEXT_LINE;
+          case 4: 
+            { return INVALID_NEXT_LINE;
             } 
             // fall through
           case 12: break;
+          case 5: 
+            { return NUMBER;
+            } 
+            // fall through
+          case 13: break;
+          case 6: 
+            { yybegin(BLOCK_STRING_CONTENT); return STRING;
+            } 
+            // fall through
+          case 14: break;
+          case 7: 
+            { return VALID_STRING_ESCAPE_TOKEN;
+            } 
+            // fall through
+          case 15: break;
+          case 8: 
+            { return NEXT_LINE;
+            } 
+            // fall through
+          case 16: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

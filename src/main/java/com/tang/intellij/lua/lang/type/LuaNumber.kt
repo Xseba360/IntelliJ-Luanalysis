@@ -16,6 +16,7 @@
 
 package com.tang.intellij.lua.lang.type
 
+import com.tang.intellij.lua.JenkinsHash
 import java.math.BigDecimal
 import kotlin.math.pow
 
@@ -33,6 +34,12 @@ class LuaNumber(var value: BigDecimal = BigDecimal(0)) {
 				if (longValue != null) {
 					return LuaNumber(longValue.toBigDecimal())
 				}
+			} else if (text.startsWith("`")) {
+				return LuaNumber(
+					JenkinsHash(
+						text.substring(1, text.length - 1)
+					).hash.toBigDecimal()
+				)
 			} else if (!text.contains('-')) {
 				val components = text.split('e', 'E')
 				var doubleValue = components[0].toDoubleOrNull()

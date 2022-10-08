@@ -22,6 +22,7 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
+import com.tang.intellij.lua.JenkinsHash
 import com.tang.intellij.lua.comment.LuaCommentUtil
 import com.tang.intellij.lua.comment.psi.LuaDocTagClass
 import com.tang.intellij.lua.comment.psi.LuaDocTagGenericList
@@ -344,6 +345,11 @@ val LuaLiteralExpr.numberValue: Float get() {
     val t = text
     if (t.startsWith("0x", true)) {
         return "${t}p0".toFloat()
+    }
+    if (t.startsWith("`", true)) {
+        return JenkinsHash(
+            text.substring(1, text.length - 1)
+        ).hash.toFloat()
     }
     return text.toFloat()
 }

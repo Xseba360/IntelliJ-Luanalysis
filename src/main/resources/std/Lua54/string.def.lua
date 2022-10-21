@@ -35,6 +35,61 @@ string = {}
 ---@return number...
 function string.byte(s, i, j) end
 
+
+---
+--- String Blobs
+--- Introduce a `LUA_TSTRING` variant that is effectively a `LUA_VLNGSTR` but
+--- without the hash caching mechanism. Values of this variant are stored in
+--- tables by reference.
+---
+--- **Create a string blob of specified length**
+---```
+--- blob = string.blob(512)
+---```
+---
+--- **Create a blob variant of another string**
+---```
+--- blob = string.blob(string.rep('\0', 80))
+---```
+---@param s string
+---@return string
+---@overload fun(len:number):string
+function string.blob(s) end
+
+---
+--- Returns a string blob containing the values v1, v2, etc. serialized in binary
+--- form (packed at an optional offset) according to the format string fmt.
+---
+--- Unlike string.pack, this function attempts to write the resulting
+--- serialization onto the provided blob (at an optional offset). If the blob is
+--- not of sufficient size, a (byte-)copy of the blob is made and returned.
+---
+--- Support for half precision floating-points in `string.pack` and `string.unpack` using 'e' as the format specifier.
+---
+---@vararg string|number
+---@param blob string
+---@param pos number
+---@param fmt string
+---@param v string|number
+---@return string
+---@overload fun(blob: string, fmt:string, v:string|number, ...:string|number):string
+function string.blob_pack(blob, pos, fmt, v) end
+
+---
+--- Returns a string blob containing the values v1, v2, etc. serialized in binary
+--- form (packed at an optional offset) according to the format string fmt.
+---
+--- Unlike string.pack, this function attempts to write the resulting
+--- serialization onto the provided blob (at an optional offset). If the blob is
+--- not of sufficient size, a (byte-)copy of the blob is made and returned.
+---@vararg string|number
+---@param str string
+---@param pos number
+---@param fmt string
+---@return (string|number)...
+---@overload fun(str: string, fmt:string):(string|number)...
+function string.blob_unpack(str, pos, fmt) end
+
 ---
 --- Receives zero or more integers. Returns a string with length equal to
 --- the number of arguments, in which each character has the internal numerical
@@ -243,16 +298,20 @@ function string.match(s, pattern, init) end
 ---
 --- Returns a binary string containing the values `v1`, `v2`, etc. packed (that
 --- is, serialized in binary form) according to the format string `fmt`.
+---
+--- [See lua manual for format options](https://www.lua.org/manual/5.4/manual.html#6.4.2)
+---@vararg string|number
 ---@param fmt string
----@param v1 string
----@param v2 string
+---@param v string|number
 ---@return string
-function string.pack(fmt, v1, v2, ...) end
+function string.pack(fmt, v, ...) end
 
 ---
 --- Returns the size of a string resulting from `string.pack` with the given
 --- format. The format string cannot have the variable-length options '`s`' or
 --- '`z`'
+---
+--- [See lua manual for format options](https://www.lua.org/manual/5.4/manual.html#6.4.2)
 ---@param fmt string
 ---@return number
 function string.packsize(fmt) end
@@ -279,6 +338,35 @@ function string.rep(s, n, sep) end
 function string.reverse(s) end
 
 ---
+--- Returns a concatenation of all number/string arguments passed
+---@vararg string
+---@return string
+function string.strconcat(...) end
+
+---
+--- Joins strings together with a delimiter
+---@vararg string
+---@param delimiter string
+---@return string
+function string.strjoin(delimiter, ...) end
+
+---
+--- Splits a string using a delimiter (optionally: into a specified number of pieces)
+---@overload fun(delimiter:string, input:string):string...
+---@param delimiter string
+---@param input string
+---@param pieces number
+---@return string...
+function string.strsplit(delimiter, input, pieces) end
+
+---
+--- Trim characters off the beginning and end of a string
+---@vararg string
+---@param input string
+---@return string
+function string.strtrim(input , ...) end
+
+---
 --- Returns the substring of `s` that starts at `i` and continues until
 --- `j`; `i` and `j` can be negative. If `j` is absent, then it is assumed to
 --- be equal to -1 (which is the same as the string length). In particular,
@@ -298,15 +386,23 @@ function string.reverse(s) end
 function string.sub(s, i, j) end
 
 ---
+--- Converts all arguments to strings
+---@vararg any
+---@return string...
+function string.tostringall(...) end
+
+---
 --- Returns the values packed in string `s` according to the format string
 --- `fmt`. An optional `pos` marks where to start reading in `s` (default is 1).
 --- After the read values, this function also returns the index of the first
 --- unread byte in `s`.
----@overload fun(fmt:string, s:string):string
+---
+--- [See lua manual for format options](https://www.lua.org/manual/5.4/manual.html#6.4.2)
+---@overload fun(fmt:string, s:string):(string|number)...
 ---@param fmt string
 ---@param s string
 ---@param pos number
----@return string
+---@return (string|number)...
 function string.unpack(fmt, s, pos) end
 
 ---

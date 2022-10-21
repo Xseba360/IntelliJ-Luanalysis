@@ -80,3 +80,12 @@ function utf8.len(s, i, j) end
 ---@param i number
 ---@return number
 function utf8.offset (s, n, i) end
+
+---
+--- String comparison accounting for UTF-8 chars. Returning a negative integer,
+--- zero, or a positive integer if the first string is less than, equal to, or
+--- greater than the second string
+---@param stringLH string
+---@param stringRH string
+---@return number
+function utf8.strcmputf8i(stringLH, stringRH) end

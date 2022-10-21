@@ -13,6 +13,22 @@
 -- the License.
 
 table = {}
+---
+--- Restore the table to its initial value (removing its contents) while
+--- retaining its internal pointer
+---@generic T
+---@param t T
+---@return T
+function table.clear(t) end
+
+---
+--- An efficient (implemented using memcpy) table shallow-copy implementation
+---@overload fun<T>(t: T): T
+---@generic T
+---@param t T
+---@param t2 T
+---@return T
+function table.clone(t, t2) end
 
 ---
 --- Given a list where all elements are strings or numbers, returns the string
@@ -28,6 +44,13 @@ table = {}
 ---@param j number
 ---@return string
 function table.concat(list, sep, i, j) end
+
+---
+--- Creates a new empty table
+---@param narr number a hint for how many elements the table will have as a sequence.
+---@param nrec number a hint for how many other elements the table will have.
+---@return table
+function table.create(narr, nrec) end
 
 ---
 --- Inserts element `value` at position `pos` in `list`, shifting up the
@@ -109,6 +132,16 @@ function table.remove(list, pos) end
 function table.sort(list, comp) end
 
 ---
+--- Return the type of table being used. Note, this function only measures the
+--- size of the "array part" of a Lua table and the "root" node of its
+--- "hash part". Once an "array" becomes "mixed", or if a table has all of
+--- values nil'd out, the table.type will remain "mixed" or "hash".
+---@generic T
+---@param t T
+---@return "empty"|"array"|"hash"|"mixed"
+function table.type(t) end
+
+---
 --- Returns the elements from the given list. This function is equivalent to
 --- return `list[i]`, `list[i+1]`, `···`, `list[j]`
 --- By default, i is 1 and j is #list.
@@ -120,5 +153,13 @@ function table.sort(list, comp) end
 ---@param j number
 ---@return T...
 function table.unpack(list, i, j) end
+
+---
+--- Restore the table to its initial value (removing its contents) while
+--- retaining its internal pointer
+---@generic T
+---@param t T
+---@return T
+function table.wipe(t) end
 
 return table

@@ -1,17 +1,18 @@
 import de.undercouch.gradle.tasks.download.Download
+import org.jetbrains.changelog.Changelog
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 fun properties(key: String) = project.findProperty(key).toString()
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.7.20"
+    id("org.jetbrains.kotlin.jvm") version "1.7.22"
 
-    id("org.jetbrains.intellij") version "1.9.0"
+    id("org.jetbrains.intellij") version "1.11.0"
 
-    id("org.jetbrains.changelog") version "1.3.1"
+    id("org.jetbrains.changelog") version "2.0.0"
 
-    id("de.undercouch.download") version "5.2.1"
+    id("de.undercouch.download") version "5.3.0"
 }
 
 group = properties("pluginGroup")
@@ -19,7 +20,6 @@ version = properties("pluginVersion")
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 dependencies {
@@ -27,7 +27,7 @@ dependencies {
         include("*.jar")
     })
 
-    implementation("org.jetbrains:markdown:0.3.1")
+    implementation("org.jetbrains:markdown:0.3.5")
 }
 
 java {
@@ -87,7 +87,7 @@ tasks {
 
         changeNotes.set(
             provider {
-                changelog.getLatest().toHTML()
+                changelog.renderItem(changelog.getLatest(), Changelog.OutputType.HTML)
             }
         )
     }

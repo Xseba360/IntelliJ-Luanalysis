@@ -30,6 +30,7 @@ import com.tang.intellij.lua.lang.LuaLanguage
  * Created by tangzx on 2017/2/22.
  */
 class LuaCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
+    @Deprecated("Deprecated in Java")
     override fun createSettingsPage(settings: CodeStyleSettings, originalSettings: CodeStyleSettings): Configurable {
         return object : CodeStyleAbstractConfigurable(settings, originalSettings, "Luanalysis") {
 
@@ -53,7 +54,7 @@ class LuaCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
 
     override fun getConfigurableDisplayName() = LuaLanguage.INSTANCE.displayName
 
-    override fun createCustomSettings(settings: CodeStyleSettings?): CustomCodeStyleSettings? {
+    override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings {
         return LuaCodeStyleSettings(settings)
     }
 }
